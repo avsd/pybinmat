@@ -13,6 +13,8 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
         return '{{:0{}b}}'.format(self.cols)
 
     def __getitem__(self, item: tuple):
+        if not isinstance(item, tuple):
+            return super().__getitem__(item)
         x, y = item
         x = x if x >= 0 else (self.cols + x)
         y = y if y >= 0 else (self.rows + y)
