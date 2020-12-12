@@ -86,3 +86,13 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
                 for y in range(self.rows)
             ]) | ((self.all_ones().expand(cols, rows).__invert__()).dump if fill else 0)
         )
+
+    def set(self, *coords):
+        return self._replace(dump=self.dump | sum([
+            1 << (x + self.cols * y)
+            for x, y in coords
+            if 0 <= x < self.cols and 0 <= y < self.rows
+        ]))
+
+    def unset(self, *coords):
+        return self._replace(dump=self.dump & self._replace(dump=0).set(*coords).__invert__().dump)
