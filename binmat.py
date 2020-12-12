@@ -7,9 +7,7 @@ from collections import namedtuple
 
 
 class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(0,))):
-
     __slots__ = ()
-
     @property
     def row_template(self):
         return '{{:0{}b}}'.format(self.cols)
@@ -31,7 +29,7 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
             '\n'.join([
                 self.row_template.format(((1 << self.cols) - 1) & (self.dump >> (y * self.cols)))[::-1]
                 for y in range(self.rows)
-            ])
+            ] )
         )
 
     @classmethod
@@ -55,3 +53,14 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
         ])
         return cls(cols, rows, dump)
 
+    def expand(self, cols, rows):
+        newCols = self.cols + abs(cols)
+        newRows = self.rows + abs(rows)
+        return self.__class__(
+            newCols, newRows,
+            sum([
+                sum([int(self[x, y]) * (1 << (x + max(0, -cols))) for x in range(self.cols)])
+                << ((y + max(0, -rows)) * newCols)
+                for y in range(self.rows)
+            ])
+        )

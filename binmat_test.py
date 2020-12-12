@@ -166,3 +166,115 @@ class Bin2dMatrixTest(unittest.TestCase):
         self.assertIs(m[40, -40], False)
         self.assertIs(m[0, -7], False)
         self.assertIs(m[5, 4], False)
+
+    def test_expand_matrix_with_ones(self):
+        m = Bin2dMatrix.from_strings([
+            '11111',
+            '11111',
+            '11111',
+            '11111',
+        ])
+
+        with self.subTest('0,0'):
+            self.assertEqual(m.expand(0, 0), m)
+            self.assertEqual(str(m.expand(0, 0)), str(m))
+
+        with self.subTest('1,1'):
+            self.assertEqual(
+                str(m.expand(1, 1)),
+                'Bin2dMatrix 6x5\n'
+                '111110\n'
+                '111110\n'
+                '111110\n'
+                '111110\n'
+                '000000'
+            )
+
+        with self.subTest('-1,-1'):
+            self.assertEqual(
+                str(m.expand(-1, -1)),
+                'Bin2dMatrix 6x5\n'
+                '000000\n'
+                '011111\n'
+                '011111\n'
+                '011111\n'
+                '011111'
+            )
+
+        with self.subTest('-2,1'):
+            self.assertEqual(
+                str(m.expand(-2, 1)),
+                'Bin2dMatrix 7x5\n'
+                '0011111\n'
+                '0011111\n'
+                '0011111\n'
+                '0011111\n'
+                '0000000'
+            )
+
+        with self.subTest('3, -1'):
+            self.assertEqual(
+                str(m.expand(3, -1)),
+                'Bin2dMatrix 8x5\n'
+                '00000000\n'
+                '11111000\n'
+                '11111000\n'
+                '11111000\n'
+                '11111000'
+            )
+
+    def test_expand_diagonal_matrix(self):
+        m = Bin2dMatrix.from_strings([
+            '10000',
+            '01000',
+            '00100',
+            '00001',
+        ])
+
+        with self.subTest('0,0'):
+            self.assertEqual(m.expand(0, 0), m)
+            self.assertEqual(str(m.expand(0, 0)), str(m))
+
+        with self.subTest('1,1'):
+            self.assertEqual(
+                str(m.expand(1, 1)),
+                'Bin2dMatrix 6x5\n'
+                '100000\n'
+                '010000\n'
+                '001000\n'
+                '000010\n'
+                '000000'
+            )
+
+        with self.subTest('-1,-1'):
+            self.assertEqual(
+                str(m.expand(-1, -1)),
+                'Bin2dMatrix 6x5\n'
+                '000000\n'
+                '010000\n'
+                '001000\n'
+                '000100\n'
+                '000001'
+            )
+
+        with self.subTest('-2,1'):
+            self.assertEqual(
+                str(m.expand(-2, 1)),
+                'Bin2dMatrix 7x5\n'
+                '0010000\n'
+                '0001000\n'
+                '0000100\n'
+                '0000001\n'
+                '0000000'
+            )
+
+        with self.subTest('3, -1'):
+            self.assertEqual(
+                str(m.expand(3, -1)),
+                'Bin2dMatrix 8x5\n'
+                '00000000\n'
+                '10000000\n'
+                '01000000\n'
+                '00100000\n'
+                '00001000'
+            )
