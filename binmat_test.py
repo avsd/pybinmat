@@ -278,3 +278,59 @@ class Bin2dMatrixTest(unittest.TestCase):
                 '00100000\n'
                 '00001000'
             )
+
+    def test_expand_diagonal_matrix_with_ones(self):
+        m = Bin2dMatrix.from_strings([
+            '10000',
+            '01000',
+            '00100',
+            '00001',
+        ])
+
+        with self.subTest('0,0'):
+            self.assertEqual(m.expand(0, 0), m)
+            self.assertEqual(str(m.expand(0, 0)), str(m))
+
+        with self.subTest('1,1'):
+            self.assertEqual(
+                str(m.expand(1, 1, fill=True)),
+                'Bin2dMatrix 6x5\n'
+                '100001\n'
+                '010001\n'
+                '001001\n'
+                '000011\n'
+                '111111'
+            )
+
+        with self.subTest('-1,-1'):
+            self.assertEqual(
+                str(m.expand(-1, -1, fill=True)),
+                'Bin2dMatrix 6x5\n'
+                '111111\n'
+                '110000\n'
+                '101000\n'
+                '100100\n'
+                '100001'
+            )
+
+        with self.subTest('-2,1'):
+            self.assertEqual(
+                str(m.expand(-2, 1, fill=True)),
+                'Bin2dMatrix 7x5\n'
+                '1110000\n'
+                '1101000\n'
+                '1100100\n'
+                '1100001\n'
+                '1111111'
+            )
+
+        with self.subTest('3, -1'):
+            self.assertEqual(
+                str(m.expand(3, -1, fill=True)),
+                'Bin2dMatrix 8x5\n'
+                '11111111\n'
+                '10000111\n'
+                '01000111\n'
+                '00100111\n'
+                '00001111'
+            )

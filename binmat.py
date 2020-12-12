@@ -22,6 +22,28 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
             else False
         )
 
+    def _check_dimensions(self, other):
+        if self._replace(dump=0) != other._replace(dump=0):
+            raise ValueError('Matrices must have the same dimensions!')
+
+    def __and__(self, other):
+        self._check_dimensions(other)
+        return self._replace(dump=self.dump & other.dump)
+
+    def __or__(self, other):
+        self._check_dimensions(other)
+        return self._replace(dump=self.dump | other.dump)
+
+    def __xor__(self, other):
+        self._check_dimensions(other)
+        return self._replace(dump=self.dump ^ other.dump)
+
+    def __invert__(self):
+        return self ^ self.all_ones()
+
+    def all_ones(self):
+        return self._replace(dump=(1 << self.cols * self.rows) - 1)
+
     def __str__(self):
         return 'Bin2dMatrix {}x{}\n{}'.format(
             self.cols,
@@ -53,7 +75,7 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
         ])
         return cls(cols, rows, dump)
 
-    def expand(self, cols, rows):
+    def expand(self, cols: int, rows: int, fill: bool = False):
         newCols = self.cols + abs(cols)
         newRows = self.rows + abs(rows)
         return self.__class__(
@@ -62,5 +84,5 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
                 sum([int(self[x, y]) * (1 << (x + max(0, -cols))) for x in range(self.cols)])
                 << ((y + max(0, -rows)) * newCols)
                 for y in range(self.rows)
-            ])
+            ]) | ((self.all_ones().expand(cols, rows).__invert__()).dump if fill else 0)
         )
