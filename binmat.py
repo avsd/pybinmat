@@ -15,7 +15,14 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
         return '{{:0{}b}}'.format(self.cols)
 
     def __getitem__(self, item: tuple):
-        return bool(self.dump & (1 << (item[1] + item[0] * self.cols)))
+        x, y = item
+        x = x if x >= 0 else (self.cols + x)
+        y = y if y >= 0 else (self.rows + y)
+        return (
+            bool(self.dump & (1 << (x + y * self.cols)))
+            if 0 <= x < self.cols and 0 <= y < self.rows
+            else False
+        )
 
     def __str__(self):
         return 'Bin2dMatrix {}x{}\n{}'.format(

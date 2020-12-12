@@ -122,3 +122,47 @@ class Bin2dMatrixTest(unittest.TestCase):
                 '0000\n'
                 '0000'
             )
+
+    def test_getitem_positive(self):
+        m = Bin2dMatrix.from_strings([
+            '01101',
+            '10010',
+            '11011',
+            '01110',
+        ])
+        self.assertIs(m[0, 0], False)
+        self.assertIs(m[0, 1], True)
+        self.assertIs(m[1, 0], True)
+        self.assertIs(m[4, 0], True)
+        self.assertIs(m[0, 3], False)
+        self.assertIs(m[4, 3], False)
+        self.assertIs(m[2, 3], True)
+
+    def test_getitem_negative(self):
+        m = Bin2dMatrix.from_strings([
+            '01101',
+            '10010',
+            '11011',
+            '01110',
+        ])
+        self.assertIs(m[-5, -4], False)
+        self.assertIs(m[-2, -1], True)
+        self.assertIs(m[-4, 0], True)
+        self.assertIs(m[4, -4], True)
+        self.assertIs(m[0, -1], False)
+        self.assertIs(m[-1, -1], False)
+        self.assertIs(m[2, -1], True)
+
+    def test_getitem_excess(self):
+        m = Bin2dMatrix.from_strings([
+            '11111',
+            '11111',
+            '11111',
+            '11111',
+        ])
+        self.assertIs(m[-6, -5], False)
+        self.assertIs(m[3, 10], False)
+        self.assertIs(m[-7, 0], False)
+        self.assertIs(m[40, -40], False)
+        self.assertIs(m[0, -7], False)
+        self.assertIs(m[5, 4], False)
