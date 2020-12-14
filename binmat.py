@@ -37,6 +37,13 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
     def unset(self, *coords):
         return self._replace(dump=self.dump & self._replace(dump=0).set(*coords).__invert__().dump)
 
+    def value_points(self, value: bool = True):
+        bv = bool(value)
+        for x in range(self.rows):
+            for y in range(self.cols):
+                if self[x, y] == bv:
+                    yield (x, y)
+
     def _check_dimensions(self, other):
         if self._replace(dump=0) != other._replace(dump=0):
             raise ValueError('Matrices must have the same dimensions!')
