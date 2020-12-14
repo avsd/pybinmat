@@ -16,13 +16,26 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
         if not isinstance(item, tuple):
             return super().__getitem__(item)
         x, y = item
-        x = x if x >= 0 else (self.cols + x)
-        y = y if y >= 0 else (self.rows + y)
+        if 0 <= x < self.cols and 0 <= y < self.rows:
+            return bool(self.dump & (1 << (x + y * self.cols)))
+        raise ValueError('Coordinates {} exceed boundaries!'.format(str(item)))
+
+    def get(self, x, y, default=False):
         return (
             bool(self.dump & (1 << (x + y * self.cols)))
             if 0 <= x < self.cols and 0 <= y < self.rows
-            else False
+            else default
         )
+
+    def set(self, *coords):
+        return self._replace(dump=self.dump | sum([
+            1 << (x + self.cols * y)
+            for x, y in coords
+            if 0 <= x < self.cols and 0 <= y < self.rows
+        ]))
+
+    def unset(self, *coords):
+        return self._replace(dump=self.dump & self._replace(dump=0).set(*coords).__invert__().dump)
 
     def _check_dimensions(self, other):
         if self._replace(dump=0) != other._replace(dump=0):
@@ -78,6 +91,12 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
         return cls(cols, rows, dump)
 
     def expand(self, cols: int, rows: int, fill: bool = False):
+        """
+        Expands the matrix left or right (for negative or positive cols)
+        and up or down (for negative or positive rows), filling the remaining
+        area with the given values. If you want to expand both left and right
+        or up and down, run expand twice.
+        """
         newCols = self.cols + abs(cols)
         newRows = self.rows + abs(rows)
         return self.__class__(
@@ -88,13 +107,3 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
                 for y in range(self.rows)
             ]) | ((self.all_ones().expand(cols, rows).__invert__()).dump if fill else 0)
         )
-
-    def set(self, *coords):
-        return self._replace(dump=self.dump | sum([
-            1 << (x + self.cols * y)
-            for x, y in coords
-            if 0 <= x < self.cols and 0 <= y < self.rows
-        ]))
-
-    def unset(self, *coords):
-        return self._replace(dump=self.dump & self._replace(dump=0).set(*coords).__invert__().dump)

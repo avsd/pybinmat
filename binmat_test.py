@@ -145,13 +145,18 @@ class Bin2dMatrixTest(unittest.TestCase):
             '11011',
             '01110',
         ])
-        self.assertIs(m[-5, -4], False)
-        self.assertIs(m[-2, -1], True)
-        self.assertIs(m[-4, 0], True)
-        self.assertIs(m[4, -4], True)
-        self.assertIs(m[0, -1], False)
-        self.assertIs(m[-1, -1], False)
-        self.assertIs(m[2, -1], True)
+        for x, y in [
+            [-5, -4],
+            [-2, -1],
+            [-4, 0],
+            [4, -4],
+            [0, -1],
+            [-1, -1],
+            [2, -1],
+        ]:
+            with self.subTest(f'[{x}, {y}]'):
+                with self.assertRaises(ValueError):
+                    m[x, y]
 
     def test_getitem_excess(self):
         m = Bin2dMatrix.from_strings([
@@ -160,12 +165,10 @@ class Bin2dMatrixTest(unittest.TestCase):
             '11111',
             '11111',
         ])
-        self.assertIs(m[-6, -5], False)
-        self.assertIs(m[3, 10], False)
-        self.assertIs(m[-7, 0], False)
-        self.assertIs(m[40, -40], False)
-        self.assertIs(m[0, -7], False)
-        self.assertIs(m[5, 4], False)
+        with self.assertRaises(ValueError):
+            m[3, 10], False
+        with self.assertRaises(ValueError):
+            m[5, 4], False
 
     def test_expand_matrix_with_ones(self):
         m = Bin2dMatrix.from_strings([
