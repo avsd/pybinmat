@@ -41,8 +41,17 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
         bv = bool(value)
         for x in range(self.rows):
             for y in range(self.cols):
-                if self[x, y] == bv:
+                if bool(self.dump & (1 << (x + y * self.cols))) == bv:
                     yield (x, y)
+
+    @property
+    def ones_count(self):
+        s = 0
+        d = self.dump
+        while d:
+            s += d & 1
+            d >>=1
+        return s
 
     def _check_dimensions(self, other):
         if self._replace(dump=0) != other._replace(dump=0):

@@ -123,6 +123,20 @@ class Bin2dMatrixTest(unittest.TestCase):
                 '0000'
             )
 
+    def test_ones_count(self):
+
+        with self.subTest('2x2 0s'):
+            self.assertEqual(Bin2dMatrix(2, 2, 0).ones_count, 0)
+
+        with self.subTest('3x3 1s'):
+            self.assertEqual(Bin2dMatrix(3, 3, 0b111111111).ones_count, 9)
+
+        with self.subTest('3x3 chess'):
+            self.assertEqual(Bin2dMatrix(3, 3, 0b010101010).ones_count, 4)
+
+        with self.subTest('2x2 1s'):
+            self.assertEqual(Bin2dMatrix(2, 2, 0b1111).ones_count, 4)
+
     def test_getitem_positive(self):
         m = Bin2dMatrix.from_strings([
             '01101',
