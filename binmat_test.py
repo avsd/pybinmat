@@ -351,3 +351,111 @@ class Bin2dMatrixTest(unittest.TestCase):
                 '00100111\n'
                 '00001111'
             )
+
+    def test_set(self):
+        m = Bin2dMatrix.from_strings([
+            '10000',
+            '01000',
+            '00100',
+            '00010',
+            '00001',
+        ])
+
+        with self.subTest('corner one'):
+            self.assertEqual(m.set((0, 0)), m)
+
+        with self.subTest('corner one, twice'):
+            self.assertEqual(m.set((0, 0), (0, 0)), m)
+
+        with self.subTest('middle one'):
+            self.assertEqual(m.set((1, 1)), m)
+
+        with self.subTest('middle one, twice'):
+            self.assertEqual(m.set((1, 1), (1, 1)), m)
+
+        with self.subTest('corner zero'):
+            self.assertEqual(
+                str(m.set((4, 0))),
+                'Bin2dMatrix 5x5\n'
+                '10001\n'
+                '01000\n'
+                '00100\n'
+                '00010\n'
+                '00001'
+            )
+
+        with self.subTest('middle zero'):
+            self.assertEqual(
+                str(m.set((2, 1))),
+                'Bin2dMatrix 5x5\n'
+                '10000\n'
+                '01100\n'
+                '00100\n'
+                '00010\n'
+                '00001'
+            )
+
+        with self.subTest('multiple ones and zeros'):
+            self.assertEqual(
+                str(m.set((4, 0), (3, 1), (2, 2), (1, 3), (0, 4), (0, 0), (0, 1))),
+                'Bin2dMatrix 5x5\n'
+                '10001\n'
+                '11010\n'
+                '00100\n'
+                '01010\n'
+                '10001'
+            )
+
+    def test_unset(self):
+        m = Bin2dMatrix.from_strings([
+            '01111',
+            '10111',
+            '11011',
+            '11101',
+            '11110',
+        ])
+
+        with self.subTest('corner one'):
+            self.assertEqual(m.unset((0, 0)), m)
+
+        with self.subTest('corner one, twice'):
+            self.assertEqual(m.unset((0, 0), (0, 0)), m)
+
+        with self.subTest('middle one'):
+            self.assertEqual(m.unset((1, 1)), m)
+
+        with self.subTest('middle one, twice'):
+            self.assertEqual(m.unset((1, 1), (1, 1)), m)
+
+        with self.subTest('corner zero'):
+            self.assertEqual(
+                str(m.unset((4, 0))),
+                'Bin2dMatrix 5x5\n'
+                '01110\n'
+                '10111\n'
+                '11011\n'
+                '11101\n'
+                '11110'
+            )
+
+        with self.subTest('middle zero'):
+            self.assertEqual(
+                str(m.unset((2, 1))),
+                'Bin2dMatrix 5x5\n'
+                '01111\n'
+                '10011\n'
+                '11011\n'
+                '11101\n'
+                '11110'
+            )
+
+        with self.subTest('multiple ones and zeros'):
+            self.assertEqual(
+                str(m.unset((4, 0), (3, 1), (2, 2), (1, 3), (0, 4), (0, 0), (0, 1))),
+                'Bin2dMatrix 5x5\n'
+                '01110\n'
+                '00101\n'
+                '11011\n'
+                '10101\n'
+                '01110'
+            )

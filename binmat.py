@@ -30,7 +30,7 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
     def set(self, *coords):
         return self._replace(dump=self.dump | sum([
             1 << (x + self.cols * y)
-            for x, y in coords
+            for x, y in set(coords)
             if 0 <= x < self.cols and 0 <= y < self.rows
         ]))
 
