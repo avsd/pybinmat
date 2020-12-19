@@ -38,11 +38,13 @@ class Bin2dMatrix(namedtuple('Bin2dMatrix', ('cols', 'rows', 'dump'), defaults=(
         return self._replace(dump=self.dump & self._replace(dump=0).set(*coords).__invert__().dump)
 
     def value_points(self, value: bool = True):
-        bv = bool(value)
-        for x in range(self.rows):
-            for y in range(self.cols):
-                if bool(self.dump & (1 << (x + y * self.cols))) == bv:
-                    yield (x, y)
+        dump = self.dump if value else (~self).dump
+        i = 0
+        while dump:
+            if dump & 1:
+                yield (i % self.cols, i // self.cols)
+            dump >>= 1
+            i += 1
 
     @property
     def ones_count(self):

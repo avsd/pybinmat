@@ -459,3 +459,53 @@ class Bin2dMatrixTest(unittest.TestCase):
                 '10101\n'
                 '01110'
             )
+
+    def test_value_points(self):
+
+        with self.subTest('1x1 True'):
+            m = Bin2dMatrix.from_strings(['1'])
+            self.assertEqual(list(m.value_points()), [(0, 0)])
+            self.assertEqual(list(m.value_points(False)), [])
+
+        with self.subTest('1x1 False'):
+            m = Bin2dMatrix.from_strings(['0'])
+            self.assertEqual(list(m.value_points(False)), [(0, 0)])
+            self.assertEqual(list(m.value_points()), [])
+
+        with self.subTest('diagonal 0'):
+            m = Bin2dMatrix.from_strings([
+                '01111',
+                '10111',
+                '11011',
+                '11101',
+                '11110',
+            ])
+            self.assertEqual(list(m.value_points()), [
+                (1, 0), (2, 0), (3, 0), (4, 0),
+                (0, 1), (2, 1), (3, 1), (4, 1),
+                (0, 2), (1, 2), (3, 2), (4, 2),
+                (0, 3), (1, 3), (2, 3), (4, 3),
+                (0, 4), (1, 4), (2, 4), (3, 4),
+            ])
+            self.assertEqual(list(m.value_points(False)), [
+                (0, 0), (1, 1), (2, 2), (3, 3), (4, 4),
+            ])
+
+        with self.subTest('multiple ones and zeros'):
+            m = Bin2dMatrix.from_strings([
+                '01110',
+                '00101',
+                '11011',
+                '10101',
+                '01110',
+            ])
+            self.assertEqual(list(m.value_points()), [
+                (1, 0), (2, 0), (3, 0),
+                (2, 1), (4, 1),
+                (0, 2), (1, 2), (3, 2), (4, 2),
+                (0, 3), (2, 3), (4, 3),
+                (1, 4), (2, 4), (3, 4),
+            ])
+            self.assertEqual(list(m.value_points(False)), [
+                (0, 0), (4, 0), (0, 1), (1, 1), (3, 1), (2, 2), (1, 3), (3, 3), (0, 4), (4, 4),
+            ])
